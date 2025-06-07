@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Random Pics</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        td {
+            border: 1px solid #333;
+            padding: 5px;
+            text-align: center;
+            width: 60px;
+            height: 60px;
+        }
+        img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+	
+	<link rel="stylesheet" href="estilo.css">
+
+</head>
+<body>	
+	
+	<div id="preloader"><span id="count">3</span></div>
+	
+  
+	<div class="contenedor">
+	<div id="main-content" class="oculto">		
+		<h2>Random Pics</h2>
+		<div id="matriz"></div>
+	</div>
+	</div>
+    <script>
+		
+		let count = 3;
+    	const countSpan = document.getElementById('count');
+    	const preloader = document.getElementById('preloader');
+    	const mainContent = document.getElementById('main-content');
+
+    	const countdown = setInterval(() => {
+      	countSpan.classList.remove('fade-scale');
+      	void countSpan.offsetWidth; // reinicia la animación
+      	count--;
+
+	    if (count > 0) {
+    	    countSpan.textContent = count;
+       		 countSpan.classList.add('fade-scale');
+      	} else {
+        	clearInterval(countdown);
+        	preloader.remove();
+        	mainContent.style.display = 'block';
+			mainContent.classList.remove('oculto'); 
+      	}
+    	}, 1000);
+
+        function generarMatriz() {
+            const letras = ["A", "B", "C", "D", "E", "F", "G", "H"];
+            const cantidad = Math.floor(Math.random() * 3) + 1;
+            const seleccionadas = [];
+            const usadas = new Set();
+
+            while (seleccionadas.length < cantidad) {
+                const letra = letras[Math.floor(Math.random() * letras.length)];
+                if (!usadas.has(letra)) {
+                    seleccionadas.push(letra);
+                    usadas.add(letra);
+                }
+            }
+
+            while (seleccionadas.length < 12) {
+                seleccionadas.push("X");
+            }
+
+            // Mezclar el array
+            for (let i = seleccionadas.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [seleccionadas[i], seleccionadas[j]] = [seleccionadas[j], seleccionadas[i]];
+            }
+
+            // Crear la matriz 4x3
+            const matriz = [];
+            let index = 0;
+            for (let i = 0; i < 4; i++) {
+                const fila = [];
+                for (let j = 0; j < 3; j++) {
+                    fila.push(seleccionadas[index++]);
+                }
+                matriz.push(fila);
+            }
+
+            return matriz;
+        }
+
+        function mostrarMatriz(matriz) {
+            const contenedor = document.getElementById("matriz");
+            const tabla = document.createElement("table");
+
+            matriz.forEach(fila => {
+                const tr = document.createElement("tr");
+                fila.forEach(valor => {
+                    const td = document.createElement("td");
+                    const img = document.createElement("img");
+                    img.src = `${valor}.png`;
+                    img.alt = valor;
+                    td.appendChild(img);
+                    tr.appendChild(td);
+                });
+                tabla.appendChild(tr);
+            });
+
+            contenedor.appendChild(tabla);
+        }
+
+        const matriz = generarMatriz();
+        mostrarMatriz(matriz);
+    </script>
+</body>
+</html>
